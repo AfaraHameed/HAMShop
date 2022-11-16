@@ -4,7 +4,7 @@ from django.template.defaultfilters import slugify
 class categ(models.Model):
 
     def __str__(self):
-        return self.name
+        return '{}'.format(self.name)
     name = models.CharField(max_length=200,unique='true')
     slug = models.SlugField(max_length=200,unique='true')
 
@@ -15,7 +15,7 @@ class categ(models.Model):
 
 class products(models.Model):
     def __str__(self):
-        return self.name
+        return '{}'.format(self.name)
     name = models.CharField(max_length=200,unique='true')
     slug = models.SlugField(max_length=200,unique='true')
     image = models.ImageField(upload_to='products')
@@ -23,4 +23,9 @@ class products(models.Model):
     stock = models.IntegerField()
     available = models.BooleanField()
     price = models.IntegerField()
+    offer = models.BooleanField()
+    offer_val = models.IntegerField()
     category_id = models.ForeignKey(categ,on_delete=models.CASCADE,default=1)
+
+    def current_price(self):
+        return (self.price * self.offer_val) / 100
