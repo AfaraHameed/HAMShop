@@ -28,4 +28,5 @@ class products(models.Model):
     category_id = models.ForeignKey(categ,on_delete=models.CASCADE,default=1)
 
     def current_price(self):
-        return (self.price * self.offer_val) / 100
+        off = (self.price * self.offer_val) / 100
+        return self.price-off
