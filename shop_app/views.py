@@ -14,3 +14,5 @@ def home(request,c_slug=None):
         product = products.objects.all().filter(available=True)
     category = categ.objects.all()
     return render(request,'index.html',{'product':product,'category':category})
+def product_details(request):
+    return render(request,'single-product.html')
