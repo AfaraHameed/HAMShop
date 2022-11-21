@@ -19,7 +19,20 @@
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
 
+
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/css/templatemo-hexashop.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/css/owl-carousel.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/css/lightbox.css' %}">
     <!-- Libraries Stylesheet -->
     <link href="{% static 'hm/lib/animate/animate.min.css' %}" rel="stylesheet">
     <link href="{% static 'hm/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
@@ -86,12 +99,12 @@
                 </a>
             </div>
             <div class="col-lg-4 col-6 text-left">
-                <form action="">
+                <form action="{% url 'search'%}" method="GET">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for products">
-                        <div class="input-group-append">
-                            <span class="input-group-text bg-transparent text-primary">
-                                <i class="fa fa-search"></i>
+                        <input type="text" class="form-control" placeholder="Search for products" name="q">
+                        <div class="input-group-append ">
+                            <span class="input-group-text bg-transparent text-primary  h-75 w-100">
+                               <button type="submit" class="btn btn-warning"> <i class="fa fa-search"></i></button>
                             </span>
                         </div>
                     </div>

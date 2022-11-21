@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='products',
             name='category',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='shop_app.categ'),
+            field=models.ForeignKey(default='null', on_delete=django.db.models.deletion.CASCADE, to='shop_app.categ'),
             preserve_default=False,
         ),
     ]
