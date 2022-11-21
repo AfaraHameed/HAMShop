@@ -30,8 +30,10 @@ class products(models.Model):
     price = models.IntegerField()
     offer = models.BooleanField()
     offer_val = models.IntegerField()
-    category_id = models.ForeignKey(categ,on_delete=models.CASCADE,default=1)
+    category = models.ForeignKey(categ,on_delete=models.CASCADE,default='All')
 
     def current_price(self):
         off = (self.price * self.offer_val) / 100
         return self.price-off
+    def get_url(self):
+        return reverse('details',args=[self.category.slug,self.slug])
