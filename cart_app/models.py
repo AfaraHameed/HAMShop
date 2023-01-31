@@ -15,7 +15,10 @@ class items(models.Model):
     prdct = models.ForeignKey(products,on_delete=models.CASCADE)
     cart = models.ForeignKey(cartlist,on_delete=models.CASCADE)
     quantity = models.IntegerField()
+    active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.prdct
+        return str(self.prdct)
+    def totalprice(self):
+        return self.prdct.current_price()*self.quantity
 
