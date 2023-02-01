@@ -22,7 +22,9 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('cartdetails/',include('cart_app.urls')),
-    path('',include('shop_app.urls'))
+    path('user/', include('accounts_app.urls')),
+    path('',include('shop_app.urls')),
+
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
