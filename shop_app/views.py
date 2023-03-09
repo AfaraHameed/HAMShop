@@ -14,7 +14,7 @@ def home(request,c_slug=None):
     else:
         product = products.objects.all().filter(available=True)
     category = categ.objects.all()
-    paginator = Paginator(product,2)
+    paginator = Paginator(product,3)
     try:
         page=int(request.GET.get('page','1'))
     except:

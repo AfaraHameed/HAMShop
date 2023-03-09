@@ -16,6 +16,7 @@
 <!--                                <a href="" class="dropdown-item">Baby's Dresses</a>-->
 <!--                            </div>-->
 <!--                        </div>-->
+                        <a href="{% url 'home' %}" class="nav-item nav-link">All</a>
                         {% for i in categories %}
                         <a href={{i.get_url}} class="nav-item nav-link">{{i.name}}</a>
                         {% endfor %}

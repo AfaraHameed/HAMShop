@@ -2,6 +2,9 @@ from django.shortcuts import render,redirect,get_object_or_404
 from shop_app.models import *
 from cart_app.models import *
 from django.core.exceptions import ObjectDoesNotExist
+import razorpay
+from django.conf import settings
+
 # Create your views here.
 def cartdetails(request,tot=0,count=0,ct_items=None):
     try:
@@ -12,7 +15,17 @@ def cartdetails(request,tot=0,count=0,ct_items=None):
             count += i.quantity
     except ObjectDoesNotExist:
         pass
-    return  render(request,'cart.html',{'ci':ct_items,'t':tot,'co':count})
+    client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+    amount=int(tot*100)
+    payment = client.order.create({'amount':amount,'currency':'INR','payment_capture':'1'})
+    ct.razor_pay_order_id = payment['id']
+    ct.save()
+    print('*******')
+    print(payment)
+
+    print('*******')
+    context={'ci':ct_items,'t':tot,'co':count,'payment':payment}
+    return  render(request,'cart.html',context)
 
 def c_id(request):
     ct_id = request.session.session_key
@@ -51,3 +64,7 @@ def cart_delete(request,product_id):
     c_items=items.objects.get(prdct=prod,cart=ct)
     c_items.delete()
     return  redirect("cartdetails")
+
+# def checkout(request):
+#     client = razorpay.Client(auth = (settings.razor_pay_key_id , settings.key_secret))
+#     payment = client.order.create()
