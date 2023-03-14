@@ -12,19 +12,19 @@
                                 }
                                 /* Track */
                                 ::-webkit-scrollbar-track {
-                                  background: #f1f1f1; 
+                                  background: #f1f1f1;
                                 }
-                                 
+
                                 /* Handle */
                                 ::-webkit-scrollbar-thumb {
-                                  background: #888; 
+                                  background: #888;
                                 }
-                                
+
                                 /* Handle on hover */
                                 ::-webkit-scrollbar-thumb:hover {
-                                  background: #555; 
+                                  background: #555;
                                 } body{
-    background: #ddd;
+    background: #d2c9ff;
     min-height: 100vh;
     vertical-align: middle;
     display: flex;
@@ -153,13 +153,13 @@ input:focus::-webkit-input-placeholder
     color: white;
     -webkit-box-shadow: none;
     -webkit-user-select: none;
-    transition: none; 
+    transition: none;
 }
 .btn:hover{
     color: white;
 }
 a{
-    color: black; 
+    color: black;
 }
 a:hover{
     color: black;
@@ -243,10 +243,10 @@ a:hover{
                         <div class="col">TOTAL PRICE</div>
                         <div class="col text-right">INR {{t}}</div>
                     </div>
-                    <button id="rzp-button1">CHECKOUT</button>
+                    <a class="btn btn-primary"  href="{% url 'payment' t %}">CONTINUE</a>
                 </div>
             </div>
-            
+
         </div>
                                 <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script>
                                 <script type='text/javascript' src='#'></script>
@@ -257,45 +257,6 @@ a:hover{
                                 myLink.addEventListener('click', function(e) {
                                   e.preventDefault();
                                 });</script>
-                            
+
                                 </body>
-
-                                <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-                                <script>
-                                    var options = {
-                                        "key": "rzp_test_jf5nv4envIZqu8", // Enter the Key ID generated from the Dashboard
-                                        "amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                                        "currency": "INR",
-                                        "name": "HAMShop",
-                                        "description": "Test Transaction",
-                                        "image": "https://example.com/your_logo",
-                                        "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-                                        "handler": function (response){
-
-                                            window.location.href = `http://127.0.0.1:8000/cartdetails/success/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`
-
-<!--                                            alert(response.razorpay_payment_id);-->
-<!--                                            alert(response.razorpay_order_id);-->
-<!--                                            alert(response.razorpay_signature)-->
-                                        },
-                                
-                                        "theme": {
-                                            "color": "#3399cc"
-                                        }
-                                    };
-                                    var rzp1 = new Razorpay(options);
-                                    rzp1.on('payment.failed', function (response){
-                                            alert(response.error.code);
-                                            alert(response.error.description);
-                                            alert(response.error.source);
-                                            alert(response.error.step);
-                                            alert(response.error.reason);
-                                            alert(response.error.metadata.order_id);
-                                            alert(response.error.metadata.payment_id);
-                                    });
-                                    document.getElementById('rzp-button1').onclick = function(e){
-                                        rzp1.open();
-                                        e.preventDefault();
-                                    }
-                                    </script>
-                            </html>
+</html>

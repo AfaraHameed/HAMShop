@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row mt-3 mx-3" style="margin-top:25px ;">
+  <div class="col-md-3">
+    <div style="margin-top: 50px; margin-left: 10px;" class="text-center">
+      <i id="animationDemo" data-mdb-animation="slide-right" data-mdb-toggle="animation"
+        data-mdb-animation-reset="true" data-mdb-animation-start="onScroll"
+        data-mdb-animation-on-scroll="repeat" class="fas fa-3x fa-shipping-fast text-white"></i>
+      <h3 class="mt-3 text-white">Welcome</h3>
+      <p class="white-text">You are 30 seconds away from compleating your order!</p>
+    </div>
+    <div class="text-center">
+      <button type="submit" class="btn btn-white btn-rounded back-button">Go back</button>
+    </div>
+
+
+  </div>
+  <div class="col-md-9 justify-content-center">
+    <div class="card card-custom pb-4">
+      <div class="card-body mt-0 mx-5">
+        <div class="text-center mb-3 pb-2 mt-3">
+          <h4 style="color: #495057 ;">Delivery Details</h4>
+        </div>
+
+        <form class="mb-0">
+
+          <div class="row mb-4">
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form9Example1" class="form-control input-custom" />
+                <label class="form-label" for="form9Example1">First name</label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form9Example2" class="form-control input-custom" />
+                <label class="form-label" for="form9Example2">Last name</label>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form9Example3" class="form-control input-custom" />
+                <label class="form-label" for="form9Example3">City</label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form9Example4" class="form-control input-custom" />
+                <label class="form-label" for="form9Example4">Zip</label>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <div class="form-outline">
+                <input type="text" id="form9Example6" class="form-control input-custom" />
+                <label class="form-label" for="form9Example6">Address</label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-outline">
+                <input type="email" id="typeEmail" class="form-control input-custom" />
+                <label class="form-label" for="typeEmail">Email</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="float-end ">
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary btn-rounded"  id="rzp-button1"
+              style="background-color: #0062CC ;">Place order</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <!-- Razorpay's Javascript code. -->
+<form action="{% url 'callback' %}" method="post">
+   {% csrf_token %}
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    var options = {
+
+      // Enter the Key ID generated from the Dashboard
+      key: "rzp_test_jf5nv4envIZqu8",
+
+      // Amount is in currency subunits.
+      // Default currency is INR. Hence,
+      // 50000 refers to 50000 paise
+      amount: "{{ payment.amount }}",
+      currency: "INR",
+
+      // Your/store name.
+      name: "HAMShop",
+
+      // Pass the `id` obtained in the response of Step 1
+      order_id: "{{ payment.id}}",
+      callback_url: "{{ callback_url }}",
+    };
+
+    // initialise razorpay with the options.
+    var rzp1 = new Razorpay(options);
+
+    // add event listener to the payment button.
+    document.getElementById('rzp-button1').onclick = function (e) {
+      rzp1.open();
+      e.preventDefault();
+    };
+  </script>
+
+</form>
+<!--<form action="{% url 'callback' %}" method="post">-->
+<!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script>-->
+<!--                                <script>-->
+<!--                                    var options = {-->
+<!--                                        "key": "rzp_test_jf5nv4envIZqu8", // Enter the Key ID generated from the Dashboard-->
+<!--                                        "amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise-->
+<!--                                        "currency": "INR",-->
+<!--                                        "name": "HAMShop",-->
+<!--                                        "description": "Test Transaction",-->
+<!--                                        "image": "https://example.com/your_logo",-->
+<!--                                        "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1-->
+<!--                                        "handler": function (response){-->
+
+<!--                                            window.location.href = `http://127.0.0.1:8000/cartdetails/callback/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`-->
+
+<!--&lt;!&ndash;                                            alert(response.razorpay_payment_id);&ndash;&gt;-->
+<!--&lt;!&ndash;                                            alert(response.razorpay_order_id);&ndash;&gt;-->
+<!--&lt;!&ndash;                                            alert(response.razorpay_signature)&ndash;&gt;-->
+<!--                                        },-->
+<!--&lt;!&ndash;                                         callback_url: 'https://your-server/callback_url',&ndash;&gt;-->
+<!--&lt;!&ndash;                                         redirect: true&ndash;&gt;-->
+
+<!--                                        "theme": {-->
+<!--                                            "color": "#3399cc"-->
+<!--                                        }-->
+<!--                                    };-->
+<!--                                    var rzp1 = new Razorpay(options);-->
+<!--                                    rzp1.on('payment.failed', function (response){-->
+<!--                                            alert(response.error.code);-->
+<!--                                            alert(response.error.description);-->
+<!--                                            alert(response.error.source);-->
+<!--                                            alert(response.error.step);-->
+<!--                                            alert(response.error.reason);-->
+<!--                                            alert(response.error.metadata.order_id);-->
+<!--                                            alert(response.error.metadata.payment_id);-->
+<!--                                    });-->
+<!--                                    document.getElementById('rzp-button1').onclick = function(e){-->
+<!--                                        rzp1.open();-->
+<!--                                        e.preventDefault();-->
+<!--                                    }-->
+<!--                                    </script>-->
+<!--  </form>-->
+
+{% endblock %}
+

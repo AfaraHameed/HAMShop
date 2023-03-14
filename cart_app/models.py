@@ -1,4 +1,8 @@
+from importlib.resources import _
+
 from django.db import models
+
+from cart_app.constants import PaymentStatus
 from shop_app.models import *
 
 
@@ -10,7 +14,8 @@ class cartlist(models.Model):
     razor_pay_order_id = models.CharField(max_length=100,null=True,blank=True)
     razor_pay_payment_id = models.CharField(max_length=100,null=True,blank=True)
     razor_pay_payment_signature = models.CharField(max_length=100,null=True,blank=True)
-
+    status = models.CharField(default=PaymentStatus.PENDING, max_length=254,blank=False,null=False,)
+    provider_order_id = models.CharField(_("Order ID"),max_length=40, null=False, blank=False)
     def __str__(self):
         return self.cart_id
 

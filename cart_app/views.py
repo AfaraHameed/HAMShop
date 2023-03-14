@@ -1,5 +1,4 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from razorpay import Order
 
 from shop_app.models import *
 from cart_app.models import *
@@ -8,6 +7,7 @@ import razorpay
 from django.conf import settings
 from .constants import PaymentStatus
 from django.views.decorators.csrf import csrf_exempt
+from razorpay.resources import order
 import json
 
 # Create your views here.
@@ -30,17 +30,17 @@ def cartdetails(request,tot=0,count=0,ct_items=None):
 
     print('*******')
     context={'ci':ct_items,'t':tot,'co':count,'payment':payment}
-    return render(
-        request,
-        'cart.html',
-        {
-            "callback_url": "http://" + "127.0.0.1:8000" + "/callback/",
-            "razorpay_key": settings.KEY,
-            'ci': ct_items, 't': tot, 'co': count, 'payment': payment
-        },
-
-    )
-    #return  render(request,'cart.html',context)
+    # return render(
+    #     request,
+    #     'cart.html',
+    #     {
+    #         "callback_url": "http://" + "127.0.0.1:8000" + "/callback/",
+    #         "razorpay_key": settings.KEY,
+    #         'ci': ct_items, 't': tot, 'co': count, 'payment': payment
+    #     },
+    #
+    # )
+    return  render(request,'cart.html',context)
 
 def c_id(request):
     ct_id = request.session.session_key
@@ -84,35 +84,63 @@ def cart_delete(request,product_id):
 #     client = razorpay.Client(auth = (settings.razor_pay_key_id , settings.key_secret))
 #     payment = client.order.create()
 
+def payment(request,amount):
+    ct = cartlist.objects.get(cart_id=c_id(request))
+    client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+    tot_amount = int(amount * 100)
+    payment = client.order.create({'amount': tot_amount, 'currency': 'INR', 'payment_capture': '1'})
+    ct.razor_pay_order_id = payment['id']
+    ct.save()
+    print('*******')
+    print(payment)
+
+    print('*******')
+    return render(
+        request,
+        'payment.html',
+        {
+            "callback_url": "http://" + "127.0.0.1:8000" + "/cartdetails/callback/",
+            "razorpay_key": settings.KEY,
+            'payment': payment
+        },
+
+    )
+
+
 @csrf_exempt
 def callback(request):
     def verify_signature(response_data):
         client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+        print(request.POST)
         return client.utility.verify_payment_signature(response_data)
 
     if "razorpay_signature" in request.POST:
         payment_id = request.POST.get("razorpay_payment_id", "")
         provider_order_id = request.POST.get("razorpay_order_id", "")
         signature_id = request.POST.get("razorpay_signature", "")
-        order = Order.objects.get(provider_order_id=provider_order_id)
-        order.payment_id = payment_id
-        order.signature_id = signature_id
-        order.save()
-        if not verify_signature(request.POST):
-            order.status = PaymentStatus.SUCCESS
-            order.save()
-            return render(request, "callback.html", context={"status": order.status})
+        order1 = cartlist.objects.get(razor_pay_order_id=provider_order_id)
+        print(order1)
+        order1.payment_id = payment_id
+        order1.signature_id = signature_id
+        order1.save()
+        if verify_signature(request.POST):
+            order1.status = PaymentStatus.SUCCESS
+            order1.save()
+            print('order status'+order1.status)
+            return render(request, "callback.html", context={"status": order1.status})
         else:
-            order.status = PaymentStatus.FAILURE
-            order.save()
-            return render(request, "callback.html", context={"status": order.status})
+            order1.status = PaymentStatus.FAILURE
+            order1.save()
+            print('order status' + order1.status)
+            return render(request, "callback.html", context={"status": order1.status})
     else:
         payment_id = json.loads(request.POST.get("error[metadata]")).get("payment_id")
+        print('*******'+payment_id)
         provider_order_id = json.loads(request.POST.get("error[metadata]")).get(
             "order_id"
         )
-        order = Order.objects.get(provider_order_id=provider_order_id)
-        order.payment_id = payment_id
-        order.status = PaymentStatus.FAILURE
-        order.save()
-        return render(request, "callback.html", context={"status": order.status})
+        order1 = cartlist.objects.get(provider_order_id=provider_order_id)
+        order1.payment_id = payment_id
+        order1.status = PaymentStatus.FAILURE
+        order1.save()
+        return render(request, "callback.html", context={"status": order1.status})
