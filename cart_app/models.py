@@ -1,8 +1,6 @@
 from importlib.resources import _
 
-from django.db import models
-
-from cart_app.constants import PaymentStatus
+from order_app.constants import PaymentStatus
 from shop_app.models import *
 
 

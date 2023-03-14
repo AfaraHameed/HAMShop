@@ -21,9 +21,11 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('order/',include('order_app.urls')),
     path('cartdetails/',include('cart_app.urls')),
     path('user/', include('accounts_app.urls')),
     path('',include('shop_app.urls')),
+
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
