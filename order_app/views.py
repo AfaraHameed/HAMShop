@@ -16,7 +16,8 @@ from .models import Order
 
 # Create your views here.
 def payment(request,amount):
-    ct = cartlist.objects.get(cart_id=c_id(request))
+    ct1=cartlist.objects.get(cart_id=c_id(request))
+    ct = Order.objects.create(cartid=ct1)
     client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
     tot_amount = int(amount * 100)
     payment1 = client.order.create({'amount': tot_amount, 'currency': 'INR', 'payment_capture': '1'})
@@ -28,7 +29,7 @@ def payment(request,amount):
         {
             "callback_url": "http://" + "127.0.0.1:8000" + "/order/callback/",
             "razorpay_key": settings.KEY,
-            'payment': payment1
+            'payment': payment1,
         },
 
     )
@@ -44,9 +45,10 @@ def callback(request):
         payment_id = request.POST.get("razorpay_payment_id", "")
         provider_order_id = request.POST.get("razorpay_order_id", "")
         signature_id = request.POST.get("razorpay_signature", "")
-        order1 = cartlist.objects.get(razor_pay_order_id=provider_order_id)
-        order1.payment_id = payment_id
-        order1.signature_id = signature_id
+        order1 = Order.objects.get(razor_pay_order_id=provider_order_id)
+        order1.razor_pay_payment_id = payment_id
+        order1.razor_pay_payment_signature = signature_id
+
         order1.save()
         if verify_signature(request.POST):
             order1.status = PaymentStatus.SUCCESS
@@ -64,7 +66,7 @@ def callback(request):
         provider_order_id = json.loads(request.POST.get("error[metadata]")).get(
             "order_id"
         )
-        order1 = cartlist.objects.get(provider_order_id=provider_order_id)
+        order1 = Order.objects.get(razor_pay_order_id=provider_order_id)
         order1.payment_id = payment_id
         order1.status = PaymentStatus.FAILURE
         order1.save()
