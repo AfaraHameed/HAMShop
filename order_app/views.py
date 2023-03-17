@@ -18,21 +18,24 @@ from .models import Order
 def payment(request,amount):
     ct1=cartlist.objects.get(cart_id=c_id(request))
     ct = Order.objects.create(cartid=ct1)
-    client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
     tot_amount = int(amount * 100)
-    payment1 = client.order.create({'amount': tot_amount, 'currency': 'INR', 'payment_capture': '1'})
-    ct.razor_pay_order_id = payment1['id']
-    ct.save()
-    return render(
-        request,
-        'payment.html',
-        {
-            "callback_url": "http://" + "127.0.0.1:8000" + "/order/callback/",
-            "razorpay_key": settings.KEY,
-            'payment': payment1,
-        },
 
-    )
+    if tot_amount>=1:
+        client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
+
+        payment1 = client.order.create({'amount': tot_amount, 'currency': 'INR', 'payment_capture': '1'})
+        ct.razor_pay_order_id = payment1['id']
+        ct.save()
+        return render(
+            request,
+            'payment.html',
+            {
+                "callback_url": "http://" + "127.0.0.1:8000" + "/order/callback/",
+                "razorpay_key": settings.KEY,
+                'payment': payment1,
+            },
+
+        )
 
 
 @csrf_exempt

@@ -244,7 +244,11 @@ a:hover{
                         <div class="col">TOTAL PRICE</div>
                         <div class="col text-right">INR {{t}}</div>
                     </div>
+                    {% if t > 0 %}
                     <a class="btn btn-primary"  href="{% url 'payment' t %}">CONTINUE</a>
+                    {% else %}
+                        <a class="btn btn-primary"  href="#">No Products</a>
+                    {% endif %}
                 </div>
             </div>
 
